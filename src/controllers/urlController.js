@@ -18,16 +18,25 @@ const createShortUrl = async function (req, res) {
 }
 
 
-const getUrl = async function (req, res) {
+const redirect2LongUrl = async function (req, res) {
     try {
-        let urlCode = req.params.urlCode
-        let getData = await urlModel.findOne({ urlCode: urlCode })
-        let { longUrl } = getData
-        return res.status(200).redirect(longUrl)
-    }
-    catch (error) {
-        return res.status(500).send({ error: error.message })
-    }
-}
 
-module.exports = { createShortUrl, getUrl }
+      let  urlCode = req.params.urlCode;
+
+      // if url (shortUrl) is not entered
+      if(!isValid(urlCode)) return res.status(400).send({status:false, message:"Url code is required"})
+      
+      let getData = await urlModel.findOne({ urlCode: urlCode });
+  
+      // if Url does not exist (in our database)
+      if (!getData) {
+        return res.status(404).send({ status: false, message: "Url not found" });
+      }
+  
+      res.redirect(302, getData.longUrl);
+    } catch (err) {
+      res.status(500).send({ msg: "Internal Server Error", error: err.message });
+    }
+  };
+
+module.exports = { createShortUrl, redirect2LongUrl }
