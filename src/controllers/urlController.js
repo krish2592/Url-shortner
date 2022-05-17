@@ -30,7 +30,7 @@ const createShortUrl = async function (req, res) {
             shortUrl: saveUrl.shortUrl,
             urlCode: saveUrl.urlCode
         }
-        return res.status(200).send({ data: result })
+        return res.status(200).send({status:true,message:"success", data: result })
     }
     catch (err) {
         res.status(500).send({ msg: "Internal Server Error", error: err.message });
