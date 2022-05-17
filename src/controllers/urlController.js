@@ -1,6 +1,5 @@
 const urlModel = require("../models/urlModel");
 const { nanoid } = require('nanoid');
-const { isValid } = require('../utilities/validator');
 const isUrl = require('is-url')
 
 const createShortUrl = async function (req, res) {
@@ -11,9 +10,6 @@ const createShortUrl = async function (req, res) {
 
         //Validating url
         if(!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
-
-        //Validating Original Url
-        if (!isValid(longUrl)) return res.status(400).send({ status: false, message: "Url is required" })
 
         //Generating unique url code
         let urlCode = longUrl.trim().slice(1, 3) + nanoid();
