@@ -1,6 +1,7 @@
-const { nanoid } = require('nanoid');
 const urlModel = require("../models/urlModel");
+const { nanoid } = require('nanoid');
 const { isValid } = require('../utilities/validator');
+const isUrl = require('is-url')
 
 const createShortUrl = async function (req, res) {
     try {
@@ -8,17 +9,20 @@ const createShortUrl = async function (req, res) {
         //Getting original url from user
         let longUrl = req.body.longUrl;
 
+        //Validating url
+        if(!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
+
         //Validating Original Url
         if (!isValid(longUrl)) return res.status(400).send({ status: false, message: "Url is required" })
 
         //Generating unique url code
-        let urlCode = longUrl.slice(1, 3) + nanoid();
+        let urlCode = longUrl.trim().slice(1, 3) + nanoid();
 
         //Checking uniqueness of url in database
         let isUniqueUrlCode = await urlModel.findOne({ urlCode: urlCode })
         if (isUniqueUrlCode) return res.status(400).send({ status: false, message: `${urlCode} is already exist` })
-      
-        //Generating short url
+
+        //Generating short url using base url plus urlCode
         let shortUrl = "localhost:3000/" + urlCode;
 
         //Saving data in database
