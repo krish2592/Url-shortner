@@ -76,7 +76,7 @@ const createShortUrl = async function (req, res) {
 
             await SET_ASYNC(`${longUrl}`, JSON.stringify(result))
 
-            return res.status(200).send({ status: true, message: "success", data: result })
+            return res.status(201).send({ status: true, message: "success", data: result })
         }
     }
     catch (err) {
