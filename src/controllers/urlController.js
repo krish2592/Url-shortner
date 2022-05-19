@@ -35,6 +35,9 @@ const createShortUrl = async function (req, res) {
         if (!isValidRequestBody(req.body)) return res.status(400).send({ status: false, message: "No user input" })
         if (!isValid(longUrl)) return res.status(400).send({ status: false, message: "Url is required or not a valid one" })
 
+        //Validating url
+        if (!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
+        
         //Getting data from cache
         let isCachedUrlData = await GET_ASYNC(`${longUrl}`)
         if (isCachedUrlData) {
@@ -49,8 +52,7 @@ const createShortUrl = async function (req, res) {
 
         //If not present in cache
         else {
-            //Validating url
-            if (!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
+            
 
             //Generating unique url code
             let urlCode = longUrl.trim().slice(1, 3) + nanoid();
