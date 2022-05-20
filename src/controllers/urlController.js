@@ -90,9 +90,6 @@ const redirect2LongUrl = async function (req, res) {
 
         let urlCode = req.params.urlCode;
        
-        //Validating url
-        if (!isValid(urlCode)) return res.status(400).send({ status: false, message: `Url code is required or not a valid one` })
-
         //Getting data from cache
         let isCachedUrlData = await GET_ASYNC(`${urlCode}`)
      
