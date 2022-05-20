@@ -1,5 +1,5 @@
 const urlModel = require("../models/urlModel");
-const { isValidRequestBody, isValid } = require('../utilities/validator')
+const { isValidRequestBody, isValid} = require('../utilities/validator')
 const { nanoid } = require('nanoid');
 const isUrl = require('is-url')
 const redis = require("redis");
@@ -37,7 +37,7 @@ const createShortUrl = async function (req, res) {
 
         //Validating url
         if (!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
-        
+
         //Getting data from cache
         let isCachedUrlData = await GET_ASYNC(`${longUrl}`)
         if (isCachedUrlData) {
@@ -52,7 +52,7 @@ const createShortUrl = async function (req, res) {
 
         //If not present in cache
         else {
-            
+
 
             //Generating unique url code
             let urlCode = longUrl.trim().slice(1, 3) + nanoid();
@@ -89,10 +89,13 @@ const redirect2LongUrl = async function (req, res) {
     try {
 
         let urlCode = req.params.urlCode;
-       
+
+        //Validating url
+        if (!isValid(urlCode)) return res.status(400).send({ status: false, message: `Url code is required or not a valid one` })
+
         //Getting data from cache
         let isCachedUrlData = await GET_ASYNC(`${urlCode}`)
-     
+
         if (isCachedUrlData) {
             let cachedUrlData = JSON.parse(isCachedUrlData)
             res.redirect(302, cachedUrlData.longUrl);
@@ -101,8 +104,10 @@ const redirect2LongUrl = async function (req, res) {
         //If not present in cache
         else {
 
+
+
             let getData = await urlModel.findOne({ urlCode: urlCode });
-           
+
             // if Url does not exist (in our database)
             if (!getData) {
                 return res.status(404).send({ status: false, message: "Url not found" });
