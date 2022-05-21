@@ -36,6 +36,7 @@ const createShortUrl = async function (req, res) {
         if (!isValid(longUrl)) return res.status(400).send({ status: false, message: "Url is required or not a valid one" })
 
         //Validating url
+        longUrl=longUrl.trim();
         if (!isUrl(longUrl)) return res.status(400).send({ status: false, message: `${longUrl} is not a valid url` })
 
         //Getting data from cache
@@ -52,7 +53,6 @@ const createShortUrl = async function (req, res) {
 
         //If not present in cache
         else {
-
 
             //Generating unique url code
             let urlCode = longUrl.trim().slice(1, 3) + nanoid();
@@ -103,8 +103,6 @@ const redirect2LongUrl = async function (req, res) {
 
         //If not present in cache
         else {
-
-
 
             let getData = await urlModel.findOne({ urlCode: urlCode });
 
